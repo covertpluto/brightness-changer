@@ -10,11 +10,11 @@ def theme():
     value_meaning = {0: "Dark", 1: "Light"}
     try:
         key = getKey(hkey, "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")
-        subkey = getSubkeyValue(key, "AppsUseLightTheme")[0]
+        sub = getSubkeyValue(key, "AppsUseLightTheme")[0]
     except FileNotFoundError:
         # some headless Windows instances (e.g. GitHub Actions or Docker images) do not have this key
         return None
-    return value_meaning[subkey]
+    return value_meaning[sub]
 
 
 def isLight():
@@ -56,12 +56,22 @@ def stop():
         time.sleep(5)
 
 
+# since PIL could not invert the image, we need to do it manually
+def invert_transparent(img):
+    w, a = img.split()
+    rgb_image = Image.merge("RGB", (w, w, w))
+    inverted_image = ImageOps.invert(rgb_image)
+    r2, g2, b2 = inverted_image.split()
+    transparent_image = Image.merge("RGBA", (r2, g2, b2, a))
+    return transparent_image
+
+
 def load_image(path):
     try:
         img = Image.open(path)
         if isLight():
             # invert the image if the user is using light mode
-            img = ImageOps.invert(img)
+            img = invert_transparent(img)
             return img
         else:
             # if the user is using dark mode, return the image as is
@@ -83,7 +93,7 @@ def load_image(path):
 
 
 # change this to False if you are sure that your monitor is definitely compatible with this script
-quit_on_error = True
+quit_on_error = False
 
 # change this to an icon.
 # Default icons:
