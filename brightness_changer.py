@@ -5,6 +5,9 @@ import win32api
 from monitorcontrol import get_monitors
 from winreg import HKEY_CURRENT_USER as hkey, QueryValueEx as getSubkeyValue, OpenKey as getKey
 
+# change this to False if you are sure that your monitor is definitely compatible with this script
+quit_on_error = True
+
 
 def theme():
     value_meaning = {0: "Dark", 1: "Light"}
@@ -28,7 +31,19 @@ def set_all(luminance):
             with monitor:
                 monitor.set_luminance(luminance)
     except ValueError:
-        pass
+        if quit_on_error:
+            icon.visible = False
+            win32api.MessageBox(0,
+                                "Display brightness changer has quit because your display is not compatible. Check "
+                                "whether DDC/CI is enabled on your monitor",
+                                "Display not compatible")
+            icon.stop()
+            while icon.visible:
+                time.sleep(5)
+
+
+brightnesses = [50, 75, 100, 1, 25]
+index = 1
 
 
 def change_luminance():
@@ -65,7 +80,7 @@ def stop():
         time.sleep(5)
 
 
-# since PIL could not invert the image, we need to do it manually
+# since PIL can't inverse the image, we need to invert the pixels manually
 def invert_transparent(img):
     w, a = img.split()
     rgb_image = Image.merge("RGB", (w, w, w))
@@ -101,9 +116,6 @@ def load_image(path):
         return load_image(path)
 
 
-# change this to False if you are sure that your monitor is definitely compatible with this script
-quit_on_error = True
-
 # change this to an icon.
 # Default icons:
 #  laptop.ico
@@ -120,13 +132,6 @@ icon = pystray.Icon(
      )
 )
 
-brightnesses = [50, 75, 100, 1, 25]
-index = 1
-
-
-
-
-
-set_all(50)
+# set_all(50)
 
 icon.run()
