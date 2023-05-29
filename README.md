@@ -4,4 +4,4 @@ IMPORTANT: your monitor must be connected through HDMI/DP or USB C for this to w
 
 # Requirements
 ```monitorcontrol``` library
-
+```pystray``` library
