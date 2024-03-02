@@ -104,9 +104,7 @@ def load_image(path):
         win32api.MessageBox(0, "Assets not found. Press OK to download...", "Icons not found")
         import requests
         images = [
-            "https://raw.githubusercontent.com/covertpluto3502/brightness-changer/main/brightness.ico",
-            "https://raw.githubusercontent.com/covertpluto3502/brightness-changer/main/laptop.ico",
-            "https://raw.githubusercontent.com/covertpluto3502/brightness-changer/main/monitor.ico"
+            "https://raw.githubusercontent.com/covertpluto/brightness-changer/main/brightness.ico",
         ]
         for img in images:
             r = requests.get(img)
@@ -117,9 +115,7 @@ def load_image(path):
 
 
 # change this to an icon.
-# Default icons:
-#  laptop.ico
-#  monitor.ico
+# Default icon:
 #  brightness.ico
 image = load_image('brightness.ico')
 
